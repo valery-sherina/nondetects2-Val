@@ -1,0 +1,12 @@
+citEntry(entry = "Article",
+         author = "Matthew N McCall and Helene McMurray and Hartmut Land and Anthony Almudevar",
+         title = "On Non-detects in qPCR Data",
+         journal = "Bioinformatics",
+         volume = "",
+         number = "",
+         year = "2014",
+         pages = "",
+         publisher = "",
+         textVersion = "McCall MN, McMurray H, Land H, Almudevar A (2014). On Non-detects in qPCR Data.",
+	 header = "For use of the nondetects package, please cite:"
+)
