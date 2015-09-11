@@ -1,8 +1,10 @@
 # actual function
 qpcrImpute <- function(object, dj=NULL, pyfit=NULL, groupVars=NULL, tol=1,
-                       iterMax=100, outform=NULL, formula=NULL, numsam=5, vary_fit=TRUE, vary_model=TRUE, add_noise=TRUE)
+                       iterMax=100, outform=c("Single","Param","Multy"), formula=NULL, numsam=5, 
+                       vary_fit=TRUE, vary_model=TRUE, add_noise=TRUE)
 {
 
+  outform<-match.arg(outform)
   ## check input
   if(class(object)!="qPCRset") stop("Input data must be of class qPCRset.")
   if(sum(featureCategory(object) == "Undetermined") == 0){

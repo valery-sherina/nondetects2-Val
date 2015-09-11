@@ -1,7 +1,7 @@
 test_qpcrImpute <- function(){
     data(oncogene2013)
     checkEquals(class(oncogene2013)[1],"qPCRset")
-    tst <- qpcrImpute(oncogene2013, groupVars=c("sampleType","treatment"))
+    tst <- qpcrImpute(oncogene2013, groupVars=c("sampleType","treatment"),outform="Single")
     checkEquals(class(tst)[1],"qPCRset")
     checkEquals(pData(oncogene2013),pData(tst))
     checkEqualsNumeric(nrow(tst),77)
