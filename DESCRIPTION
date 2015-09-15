@@ -7,7 +7,7 @@ Description: Methods to model and impute non-detects in the results of
 Author: Matthew N. McCall <mccallm@gmail.com>, Valeriia Sherina <valery.sherina@gmail.com>
 Maintainer: Valeriia Sherina <valery.sherina@gmail.com>
 Depends: R (>= 3.0.2), Biobase (>= 2.22.0)
-Imports: utils, methods, HTqPCR (>= 1.16.0)
+Imports: limma, mvtnorm, utils, methods, HTqPCR (>= 1.16.0)
 Suggests: BiocStyle (>= 1.0.0), RUnit, BiocGenerics (>= 0.8.0)
 biocViews: Software, AssayDomain, GeneExpression, Technology, qPCR,
         WorkflowStep, Preprocessing
