@@ -1,0 +1,109 @@
+% automatic manuscript creation for nondetects
+% -*- mode: noweb; noweb-default-code-mode: R-mode; -*-
+%\VignetteIndexEntry{nondetects - vignette}
+%\VignetteDepends{nondetects, HTqPCR}
+%\VignettePackage{nondetects}
+\documentclass[12pt]{article}
+\usepackage{hyperref, Sweave}
+%\usepackage{natbib}
+
+\textwidth=6.2in
+\textheight=8.5in
+\parskip=.3cm
+\oddsidemargin=.1in
+\evensidemargin=.1in
+\headheight=-.3in
+
+\newcommand\Rpackage[1]{{\textsf{#1}\index{#1 (package)}}}
+\newcommand\dataset[1]{{\textit{#1}\index{#1 (data set)}}}
+\newcommand\Rclass[1]{{\textit{#1}\index{#1 (class)}}}
+\newcommand\Rfunction[1]{{{\small\texttt{#1}}\index{#1 (function)}}}
+\newcommand\Rfunarg[1]{{\small\texttt{#1}}}
+\newcommand\Robject[1]{{\small\texttt{#1}}}
+
+\author{Matthew N. McCall}
+
+\begin{document}
+\title{Non-detects in qPCR data: methods to model and impute
+  non-detects in the results of qPCR experiments (nondetects)}
+\maketitle \tableofcontents
+
+\section{Background on non-detects in qPCR data}
+Quantitative real-time PCR (qPCR) measures gene expression for a
+subset of genes through repeated cycles of sequence-specific DNA
+amplification and expression measurements. During the exponential
+amplification phase, each cycle results in an approximate doubling of
+the quanitity of each target transcript. The threshold cycle (Ct) --
+the cycle at which the target gene's expression first exceeds a
+predetermined threshold -- is used to quantify the expression of each
+target gene. These Ct values typically represent the raw data from a
+qPCR experiment.
+
+One challenge of qPCR data is the presence of \emph{non-detects} --
+those reactions failing to attain the expression threshold. While most
+current software replaces these non-detects with the maximum possible
+Ct value (typically 40), recent work has shown that this introduces
+large biases in estimation of both absolute and differential
+expression. Here, we treat the non-detects as missing data, model the
+missing data mechanism, and use this model to impute Ct values for the
+non-detects.
+
+\section{EM algorithm}
+We propose the following model of observed expression for gene $i$,
+sample-type $j$, and replicate $k$, $Y_{ijk}$:
+\begin{displaymath}
+Y_{ijk} = \left\{ \begin{array}{ll}
+\theta_{ij} + \delta_{k} + \varepsilon_{ijk} & \textrm{if $Z_{ijk}=1$}\\
+\textrm{non-detect} & \textrm{if $Z_{ijk}=0$}
+\end{array} \right.
+\end{displaymath}
+where $\delta_{k}$ represents a global shift in expression across samples and,
+\begin{displaymath}
+Pr(Z_{ijk}=1) = \left\{ \begin{array}{ll}
+g(Y_{ijk}) & \textrm{if $Y_{ijk} < 40$} \\
+0 & \textrm{otherwise}
+\end{array} \right.
+\end{displaymath}
+Here, $g(Y_{ijk})$ can be estimated via the following logistic regression:
+\[
+logit(Pr(Z_{ijk}=1)) =  \beta_0 + \beta_1 \hat{\theta}_{ij}
+\]
+where $\hat{\theta}_{ij}$ is an estimate of the average expression for
+gene $i$ and sample-type $j$. 
+
+\section{Example}
+
+\subsection*{Data from Sampson \emph{et al.} Oncogene 2013}
+Two cell types -- young adult mouse colon (YAMC) cells and
+mutant-p53/activated-Ras transformed YAMC cells -- in combination with
+three treatments -- untreated, sodium butyrate, or valproic acid. Four
+replicates were performed for each cell-type/treatment combination
+\cite{sampson2012gene}.
+
+\subsection*{Load the data}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

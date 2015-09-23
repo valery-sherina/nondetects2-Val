@@ -1,0 +1,183 @@
+---
+title: 'Non-detects in qPCR data: methods to model and impute non-detects in the results
+  of qPCR experiments (nondetects)'
+author: "Valeriia Sherina, Matthew N. McCall"
+date: "`r Sys.Date()`"
+output: html_document
+bibliography: nondetects.bib
+---
+
+# 1 Background on non-detects in qPCR data
+
+Quantitative real-time PCR (qPCR) measures gene expression for a
+subset of genes through repeated cycles of sequence-specific DNA
+amplification and expression measurements. During the exponential
+amplification phase, each cycle results in an approximate doubling of
+the quanitity of each target transcript. The threshold cycle (Ct) --
+the cycle at which the target gene's expression first exceeds a
+predetermined threshold -- is used to quantify the expression of each
+target gene. These Ct values typically represent the raw data from a
+qPCR experiment.
+
+One challenge of qPCR data is the presence of *non-detects* those reactions failing to attain the expression threshold. While most
+current software replaces these non-detects with the maximum possible
+Ct value (typically 40), recent work has shown that this introduces
+large biases in estimation of both absolute and differential
+expression. Here, we treat the non-detects as missing data, model the
+missing data mechanism, and use this model to impute Ct values for the
+non-detects.
+
+# 2 EM algirithm
+We propose the following model of observed expression for gene $i$,
+sample-type $j$, and replicate $k$, $Y_{ijk}$:
+$$Y_{ijk} = \left\{ \begin{array}
+{rr}
+\theta_{ij} + \delta_{k} + \epsilon_{ijk} & \textrm{if $Z_{ijk}=1$}\\
+\textrm{non-detect} & \textrm{if $Z_{ijk}=0$}
+\end{array} \right.$$
+
+where $\delta_{k}$ represents a global shift in expression across samples and,
+$$ Pr(Z_{ijk}=1) = \left\{ \begin{array}
+{rr}
+g(Y_{ijk}) & \textrm{if $Y_{ijk} < 40$} \\
+0 & \textrm{otherwise}
+\end{array} \right.$$
+
+Here, $g(Y_{ijk})$ can be estimated via the following logistic regression:
+\[
+logit(Pr(Z_{ijk}=1)) =  \beta_0 + \beta_1 \hat{\theta}_{ij}
+\]
+where $\hat{\theta}_{ij}$ is an estimate of the average expression for
+gene $i$ and sample-type $j$. 
+
+# 3 Example
+
+## Data from Sampson *et al.* Oncogene 2013
+Two cell types -- young adult mouse colon (YAMC) cells and
+mutant-p53/activated-Ras transformed YAMC cells -- in combination with
+three treatments -- untreated, sodium butyrate, or valproic acid. Four
+replicates were performed for each cell-type/treatment combination
+[ @sampson2012gene].
+
+## Load the data
+
+```{r, echo=TRUE}
+library(HTqPCR)
+library(mvtnorm)
+library(nondetects)
+data(oncogene2013)
+```
+
+## Examine residuals when non-detects are replaced by 40
+Normalize to Becn1:
+```{r, echo=TRUE}
+normCt <- normalizeCtData(oncogene2013, norm = "deltaCt", deltaCt.genes = "Becn1")
+```
+
+Calculate residuals for each set of replicates:
+```{r, echo=TRUE}
+conds <- paste(pData(normCt)$sampleType,pData(normCt)$treatment,sep=":")
+resids <- matrix(nrow=nrow(normCt), ncol=ncol(normCt))
+for(i in 1:nrow(normCt)){
+  for(j in 1:ncol(normCt)){
+    ind <- which(conds==conds[j])
+    resids[i,j] <- exprs(normCt)[i,j]-mean(exprs(normCt)[i,ind])
+  }
+}
+``` 
+
+Create boxplots of residuals stratified by the presence of a non-detect:
+```{r, echo=TRUE}
+iND <- which(featureCategory(normCt)=="Undetermined", arr.ind=TRUE)
+iD <- which(featureCategory(normCt)!="Undetermined", arr.ind=TRUE)
+boxes <- list("observed"=-resids[iD], "non-detect"=-resids[iND])
+```
+
+```{r, echo=TRUE}
+boxplot(boxes, main="",ylim=c(-12,12),
+        ylab=expression(paste("-",Delta,"Ct residuals",sep="")))
+```
+
+## Impute non-detects
+```{r, echo=TRUE}
+oncogene2013_1 <- qpcrImpute(oncogene2013, 
+groupVars=c("sampleType","treatment"), outform = c("Multy"), 
+vary_fit=FALSE, vary_model=TRUE, add_noise=TRUE, numsam=2)
+``` 
+
+## Examine residuals when non-detects are replaced by imputed values
+Normalize to Becn1:
+```{r, echo=TRUE}
+normCt <- normalizeCtData(oncogene2013_1[[1]], norm = "deltaCt", deltaCt.genes = "Becn1")
+``` 
+
+Remove the normalization gene:
+```{r, echo=TRUE}
+normCt <- normCt[-which(featureNames(normCt)=="Becn1"),]
+``` 
+
+Calculate residuals for each set of replicates:
+``` {r, echo=TRUE}
+conds <- paste(pData(normCt)$sampleType,
+               pData(normCt)$treatment,sep=":")
+resids <- matrix(nrow=nrow(normCt), ncol=ncol(normCt))
+for(i in 1:nrow(normCt)){
+  for(j in 1:ncol(normCt)){
+    ind <- which(conds==conds[j])
+    resids[i,j] <- exprs(normCt)[i,j]-mean(exprs(normCt)[i,ind])
+  }
+}
+```
+
+Create boxplots of residuals stratified by the presence of a non-detect:
+```{r, echo=TRUE}
+iI <- which(featureCategory(normCt)=="Imputed", arr.ind=TRUE)
+iD <- which(featureCategory(normCt)!="Imputed", arr.ind=TRUE)
+boxes <- list("observed"=-resids[iD], "imputed"=-resids[iI])
+```
+```{r, echo=TRUE}
+boxplot(boxes, main="",ylim=c(-12,12),
+        ylab=expression(paste("-",Delta,"Ct residuals",sep="")))
+```
+
+
+# Additional examples
+Two additional example data sets are used in the paper and included in
+the package. These are each briefly described below.
+
+## Data from Almudevar *et al.* SAGMB 2011
+Cells transformed to malignancy by mutant p53 and activated Ras are
+perturbed with the aim of restoring gene expression to levels found in
+non-transformed parental cells via retrovirus-mediated re-expression
+of corresponding cDNAs or shRNA-dependent stable knock-down. The data
+contain 4-6 replicates for each perturbation, and each perturbation
+has a corresponding control sample in which only the vector has been
+added [ @almudevar2011fitting].
+
+```{r, echo=TRUE}
+library(nondetects)
+data(sagmb2011)
+```
+
+## Data from McMurray *et al.* Nature 2008
+A study of the effect of p53 and/or Ras mutations on gene
+expression. The third dataset is a comparison between four cell types
+-- YAMC cells, mutant-p53 YAMC cells, activated-Ras YAMC cells, and
+p53/Ras double mutant YAMC cells. Three replicates were performed for
+the untransformed YAMC cells, and four replicates were performed for
+each of the other cell types [ *mcmurray2008synergistic].
+
+```{r, echo=TRUE}
+library(nondetects)
+data(nature2008)
+```
+
+# Funding
+This work was supported by National Institutes of Health [grant
+  numbers CA009363, CA138249, HG006853]; and an Edelman-Gardner
+Foundation Award.
+
+# Session Info
+```{r, echo=TRUE}
+sessionInfo()
+``` 
