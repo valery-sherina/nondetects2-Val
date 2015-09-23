@@ -192,12 +192,12 @@ qpcrImpute <- function(object, dj=NULL, pyfit=NULL, groupVars=NULL, tol=1,
   print(outform)
 
   if (outform == "Multy") {
-    multylist<-multy(pyfit, numsam, params.new, Ct, Y, dj, ez, ez2,
+    multylist<-multy(object, pyfit, numsam, params.new, Ct, Y, dj, ez, ez2,
                      i.nd, ngene, ntype, DesLM, iterMax, tol,
                      vary_fit, vary_model, add_noise)
   }
   else {
-    if (outform == "Imput") {
+    if (outform == "Single") {
       Ct[which(as.logical(i.nd))] <- ez[which(as.logical(i.nd))]
       ind <- grep("target", featureType(object), ignore.case=TRUE)
       exprs(object)[ind,] <- Ct

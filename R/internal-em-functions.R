@@ -99,7 +99,7 @@ logLik <- function(Ct, ez, ez2, s2Vec, thetaVec, dj, i.nd){
 
 #########################################
 ## Multiple imputation
-multy <- function(pyfit, numsam, params.new, Ct, Y, dj, ez, ez2,
+multy <- function(object, pyfit, numsam, params.new, Ct, Y, dj, ez, ez2,
                   i.nd, ngene, ntype, DesLM, iterMax, tol,
                   vary_fit, vary_model, add_noise)
 {
@@ -112,7 +112,7 @@ multy <- function(pyfit, numsam, params.new, Ct, Y, dj, ez, ez2,
   multylist <- list()
   for(k in 1:numsam)
   {
-   cat("creating data set ",k,"\n")
+   cat("\n creating data set ",k,"\n")
    ez <- ezInit
    params<-params.new
    if (vary_fit)
