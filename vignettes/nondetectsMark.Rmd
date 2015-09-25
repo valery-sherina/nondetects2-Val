@@ -3,7 +3,7 @@ title: 'Non-detects in qPCR data: methods to model and impute non-detects in the
   of qPCR experiments (nondetects)'
 author: "Valeriia Sherina, Matthew N. McCall"
 date: "`r Sys.Date()`"
-output: html_document
+output: BiocStyle::html_document
 bibliography: nondetects.bib
 ---
 
@@ -165,7 +165,7 @@ expression. The third dataset is a comparison between four cell types
 -- YAMC cells, mutant-p53 YAMC cells, activated-Ras YAMC cells, and
 p53/Ras double mutant YAMC cells. Three replicates were performed for
 the untransformed YAMC cells, and four replicates were performed for
-each of the other cell types [ *mcmurray2008synergistic].
+each of the other cell types [ @mcmurray2008synergistic].
 
 ```{r, echo=TRUE}
 library(nondetects)
@@ -181,3 +181,5 @@ Foundation Award.
 ```{r, echo=TRUE}
 sessionInfo()
 ``` 
+
+# References

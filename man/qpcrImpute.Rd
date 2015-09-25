@@ -7,7 +7,7 @@
 }
 \usage{
 qpcrImpute(object, dj=NULL, pyfit=NULL, groupVars=NULL, tol=1, iterMax=100, 
-          outform=NULL, formula=NULL, numsam=5, 
+          outform=c("Single","Param","Multy"), formula=NULL, numsam=5, 
           vary_fit=TRUE, vary_model=TRUE, add_noise=TRUE)
 }
 \arguments{
@@ -28,16 +28,16 @@ qpcrImpute(object, dj=NULL, pyfit=NULL, groupVars=NULL, tol=1, iterMax=100,
   \item{numsam}{number of the datasets to be created if outform="Multy". The default value is 5.}
   \item{vary_fit}{if outform="Multy", includes the model uncertainty due to the logit of the probability of being missing. The default value is "TRUE".}
   \item{vary_model}{if outform="Multy", includes the model uncertainty due to the estimating mean of the data. The default value is "TRUE".}
-  \item{vary_noise}{if outform="Multy", introduses the variance component due to the random noise. The default value is "TRUE".}
+  \item{add_noise}{if outform="Multy", introduses the variance component due to the random noise. The default value is "TRUE".}
 }
 \value{
   The function returns a qPCRset object with non-detects replaced by
   their imputed values. 
 }
-\author{Matthew N. McCall}
+\author{Valeriia Sherina, Matthew N. McCall}
 \examples{
   data(sagmb2011)
-  tst <- qpcrImpute(sagmb2011,groupVars="sampleType")
+  tst <- qpcrImpute(sagmb2011,groupVars="sampleType", outform="Param")
 }
 \keyword{manip}
 
