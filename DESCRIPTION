@@ -1,5 +1,5 @@
 Package: nondetects
-Version: 1.3.3
+Version: 1.99.0
 Date: 2015-09-25
 Title: Non-detects in qPCR data
 Description: Methods to model and impute non-detects in the results of
