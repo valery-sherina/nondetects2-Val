@@ -1,3 +1,10 @@
+CHANGES IN VERSION 0.99.3
+-------------------------
+
+    o Added option for the output of model parameters.
+    o Added option for multiple imputation.
+    o Added option for the model function.
+
 CHANGES IN VERSION 0.99.2
 -------------------------
 
