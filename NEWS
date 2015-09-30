@@ -1,0 +1,27 @@
+CHANGES IN VERSION 1.99.0
+-------------------------
+    o Added option for the output of model parameters.
+    o Added option for multiple imputation.
+    o Added option for the model function.
+
+CHANGES IN VERSION 0.99.2
+-------------------------
+
+BUG FIXES
+    o Added informative NEWS file.
+    o Added version information to DESCRIPTION file.
+
+CHANGES IN VERSION 0.99.1
+-------------------------
+
+BUG FIXES
+    o Changes in coding style to make package consistent with Bioconductor.
+    o New biocViews added to package.
+    o Added importing of pData from Biobase package.
+    o Added unit tests.
+
+
+CHANGES IN VERSION 0.99.0
+-------------------------
+
+    o Package released.
