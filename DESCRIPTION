@@ -11,4 +11,4 @@ Imports: limma, mvtnorm, utils, methods, HTqPCR (>= 1.16.0)
 Suggests: BiocStyle (>= 1.0.0), RUnit, BiocGenerics (>= 0.8.0)
 biocViews: Software, AssayDomain, GeneExpression, Technology, qPCR,
         WorkflowStep, Preprocessing
-License: GPL-3 | file LICENSE
+License: GPL-3
